@@ -1,0 +1,9 @@
+{
+  "name": "error404-debugger-vercel-supabase",
+  "version": "2.2.0",
+  "private": true,
+  "description": "ERROR 404 Debugger - secured Vercel production build with Supabase persistence",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.0"
+  }
+}

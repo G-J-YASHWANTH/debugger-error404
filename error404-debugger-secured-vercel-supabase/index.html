@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ERROR 404 · Python Debugger Arena</title>
+<style>
+:root{--bg:#0a0e14;--panel:#121a26;--ink:#d6ffe9;--dim:#7d93a6;--g:#39ff88;--m:#ff3d9a;--y:#ffd23f;--r:#ff4d4d;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%}
+body{background:radial-gradient(circle at 20% 0,#14243a,var(--bg) 60%);color:var(--ink);font:15px/1.5 ui-monospace,Menlo,Consolas,monospace;overflow-x:hidden;user-select:none}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,#0000 0 2px,#0003 3px);z-index:50}
+h1,h2,h3{margin:0}
+.glitch{font-size:clamp(44px,12vw,96px);font-weight:900;color:var(--g);position:relative;letter-spacing:4px;text-shadow:3px 0 var(--m),-3px 0 #38e1ff;animation:gl 2.4s infinite steps(1)}
+@keyframes gl{0%,90%,100%{transform:none}92%{transform:translate(4px,-2px) skewX(8deg)}95%{transform:translate(-5px,1px)}}
+.wrap{position:relative;z-index:5;max-width:980px;margin:0 auto;padding:20px 16px 60px}
+.card{background:var(--panel);border:1px solid #24405a;border-radius:14px;padding:20px;box-shadow:0 0 30px #39ff8815}
+button{font:inherit;font-weight:700;cursor:pointer;border:2px solid var(--g);background:#39ff8820;color:var(--g);padding:10px 18px;border-radius:10px;transition:.15s}
+button:hover{background:var(--g);color:#031;transform:translateY(-2px) rotate(-1deg)}
+button.alt{border-color:var(--m);color:var(--m);background:#ff3d9a18}button.alt:hover{background:var(--m);color:#210}
+input,select{font:inherit;background:#0a121c;color:var(--ink);border:1px solid #2c4a66;border-radius:8px;padding:10px;width:100%;margin:4px 0 12px;user-select:text}
+label{color:var(--dim);font-size:13px}
+.row{display:flex;gap:12px;flex-wrap:wrap}.row>*{flex:1;min-width:140px}
+.seg{display:flex;gap:8px;margin:6px 0 14px}.seg button{flex:1}.seg button.on{background:var(--g);color:#031}
+#code{width:100%;height:290px;background:#070b11;color:#c8ffd9;border:1px solid #2c4a66;border-radius:10px;padding:14px;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace;tab-size:2;resize:vertical;user-select:text;white-space:pre}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.pill{border:1px solid #2c4a66;border-radius:99px;padding:3px 12px;color:var(--dim)}
+.timer{color:var(--y);font-size:22px;font-weight:700}
+.prog{display:flex;gap:6px;margin:8px 0 16px}.prog i{flex:1;height:8px;border-radius:4px;background:#1c2e40}.prog i.done{background:var(--g)}.prog i.cur{background:var(--y);animation:bl 1s infinite}
+@keyframes bl{50%{opacity:.35}}
+#out{margin-top:12px;white-space:pre-wrap;min-height:24px}
+.ok{color:var(--g)}.bad{color:var(--r)}
+table{width:100%;border-collapse:collapse}td,th{padding:8px 6px;text-align:left;border-bottom:1px solid #1f3348}th{color:var(--dim);font-weight:400;font-size:12px}
+tr.me{background:#39ff8818}.warnc{color:var(--r);font-weight:700}
+.ov{position:fixed;inset:0;z-index:100;background:#000d;display:none;align-items:center;justify-content:center;padding:16px;overflow:auto}
+.ov.show{display:flex}.ov .card{max-width:640px;width:100%}
+#warn .card{border-color:var(--r);text-align:center;animation:sh .4s 2;box-shadow:0 0 60px #ff4d4d66}
+@keyframes sh{25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}
+.doodle{position:fixed;z-index:3;font-size:46px;cursor:pointer;filter:drop-shadow(0 0 8px #39ff8866);transition:transform .15s;will-change:left,top}
+.doodle:active{transform:scale(1.6) rotate(25deg)}
+.bubble{position:fixed;z-index:4;background:#fff;color:#111;border-radius:12px;padding:4px 10px;font-size:12px;pointer-events:none;opacity:0;transition:opacity .3s;max-width:180px}
+.hint{color:var(--dim);font-size:13px;margin:10px 0}
+.hidden{display:none!important}
+#hb .card{max-width:760px;padding:0;overflow:hidden;border-color:var(--m)}
+.hbar{display:flex;gap:6px;align-items:center;padding:10px;background:#0a121c;border-bottom:1px solid #24405a}
+.hbar button{padding:4px 10px}.hbar .url{flex:1;background:#070b11;border:1px solid #2c4a66;border-radius:99px;padding:5px 14px;color:var(--dim);overflow:hidden;white-space:nowrap}
+#hsearch{margin:0;border-radius:99px;padding:6px 14px}
+#hpage{padding:16px 20px;max-height:55vh;overflow:auto;user-select:text}
+#hpage a{color:var(--m);cursor:pointer;text-decoration:underline}
+#hpage code,#hpage pre{background:#070b11;color:#c8ffd9;border-radius:6px;padding:2px 6px}#hpage pre{padding:10px;overflow:auto}
+#hpage h3{color:var(--y);margin:12px 0 4px}
+
+.winner-row{position:relative;background:#39ff8818}.winner-flag{display:inline-block;margin-left:8px;padding:2px 8px;border:1px solid var(--y);border-radius:7px;color:var(--y);font-size:12px;white-space:nowrap}.podium{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.podium>div{background:#0a121c;border:1px solid #2c4a66;border-radius:10px;padding:12px;text-align:center}.podium .first{border-color:var(--y);transform:translateY(-5px)}.admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.admin-actions button{flex:1;min-width:145px}.statusbar{padding:8px 12px;border:1px solid #2c4a66;border-radius:8px;color:var(--y);margin:10px 0}.code-note{color:var(--dim);font-size:12px}
+</style></head><body>
+<div id="doodles"></div><div class="bubble" id="bub"></div>
+<div class="wrap" id="app"></div>
+
+<div class="ov" id="warn"><div class="card"><div style="font-size:60px">🚨</div><h2 style="color:var(--r)">WARNING · TAB ESCAPE DETECTED</h2>
+<p>You left the arena! This incident was <b>reported to the organizers</b> and <b>+15s penalty</b> was added.</p>
+<p>Violations so far: <b class="warnc" id="vc">0</b></p><button class="alt" onclick="backIn()">I'm back. I'll behave.</button></div></div>
+
+<div class="ov" id="hb"><div class="card"><div class="hbar"><button id="hback">◀</button><button id="hfwd">▶</button><button id="hhome">🏠</button><div class="url" id="hurl">404://help/home</div><button class="alt" onclick="closeHelp()">✖ Close</button></div><div class="hbar"><input id="hsearch" placeholder="🔎 Search docs: array, string, loop, regex..."></div><div id="hpage"></div></div></div>
+
+<div class="ov" id="lb"><div class="card"><h2 id="lbt">Leaderboard</h2><div id="lbbody"></div><p style="text-align:right"><button id="lbnext">Next question ▶</button></p></div></div>
+
+<script>
+const PEN_WARN=15000, PEN_WRONG=0, PEN_SKIP=300000;
+const Q=[
+{t:"Trial · The Missing Return",fn:"total_price",code:"def total_price(prices):\n    total = 0\n    for price in prices:\n        total += price\n    print(total)\n\n# Return the total instead of printing it\n# The caller checks the returned number\n# Empty input should return zero\n",tests:[[[[10,20,5]],35],[[[]],0],[[[7]],7]],hint:"A function must return a value for the caller to use. print() only displays it.",tips:"Keep the accumulator pattern: start at 0, add every item, then return the accumulator. Test an empty list and a one-item list.",d:{e:["🐛","🪲"],b:"flee",q:"Catch me if you can!"}},
+{t:"The Even Number Detector",fn:"is_even",code:"def is_even(number):\n    if number % 2 == 1:\n        return True\n    else:\n        return False\n\n# Even numbers have no remainder\n# when divided by two\n# Keep the result as a boolean\n",tests:[[[4],true],[[7],false],[[0],true]],hint:"The remainder operator % returns 0 for even numbers.",tips:"Check the condition carefully: number % 2 == 0 means even. You can also return the comparison directly. Try 0, a positive odd number and a negative even number.",d:{e:["🐱"],b:"follow",q:"Meow... modulo mystery!"}},
+{t:"Backwards Bot",fn:"reverse_text",code:"def reverse_text(text):\n    letters = list(text)\n    letters.reverse()\n    result = \"\"\n    for letter in letters:\n        result += letter\n    return text\n\n# Build the reversed string\n# Return the newly created value\n",tests:[[["python"],"nohtyp"],[["404"],"404"],[["debug"],"gubed"]],hint:"The loop builds result, but the function returns the original text.",tips:"The reverse list is already prepared. Add each character to result in order, then return result. Remember that strings are immutable, so building a new string is fine.",d:{e:["🤖","⚙️"],b:"wander",q:"BEEP. REVERSING. BOOP."}},
+{t:"Negative Nancy",fn:"largest_number",code:"def largest_number(numbers):\n    largest = 0\n    for value in numbers:\n        if value > largest:\n            largest = value\n    return largest\n\n# The list may contain only negatives\n# Do not assume zero is in the list\n",tests:[[[[1,9,3]],9],[[[-5,-2,-9]],-2],[[[-1]],-1]],hint:"Zero is not a safe starting maximum if every value is negative.",tips:"Use the first list element as the initial maximum when the list is non-empty, then compare the remaining values. Consider what your function should do with an empty list.",d:{e:["👻"],b:"orbit",q:"Boo! Negative numbers haunt me."}},
+{t:"Factorial Rocket",fn:"factorial",code:"def factorial(number):\n    if number == 0:\n        return 0\n    result = 1\n    for value in range(1, number + 1):\n        result *= value\n    return result\n\n# Factorial of zero is one\n# Multiplication starts from one\n",tests:[[[0],1],[[1],1],[[5],120]],hint:"The base case for 0! is 1, not 0.",tips:"Factorial multiplies all positive integers up to n. The loop already starts with result = 1; make the zero base case match the mathematical definition. Test 0 and 1.",d:{e:["🚀","🌙"],b:"bounce",q:"3... 2... 1... stack overflow!"}},
+{t:"Vowel Vampire",fn:"count_vowels",code:"def count_vowels(text):\n    vowels = \"aeiou\"\n    count = 0\n    for character in text:\n        if character in vowels:\n            count += 1\n    return count\n\n# The input may contain uppercase letters\n# Count each vowel only once per character\n",tests:[[["banana"],3],[["HELLO"],2],[["xyz"],0]],hint:"Normalize the input to one case before checking membership.",tips:"Convert the text with lower() before iterating, or compare lowercased characters. Keep count initialized to zero and increment once per vowel. Try uppercase and no-vowel inputs.",d:{e:["🧛","🦇"],b:"wander",q:"I vant to count your vowels."}},
+{t:"Palindrome Spider",fn:"is_palindrome",code:"def is_palindrome(text):\n    reversed_text = text[::-1]\n    if text == reversed_text:\n        return False\n    else:\n        return True\n\n# A palindrome reads the same both ways\n# Keep the return value as a boolean\n",tests:[[["level"],true],[["abc"],false],[["noon"],true]],hint:"The equality test is correct, but the returned booleans are reversed.",tips:"A palindrome is true when the original text equals its reversed version. You can return that comparison directly. Test one palindrome and one ordinary word.",d:{e:["🕷️"],b:"follow",q:"I'm weaving a web of bugs."}},
+{t:"Fibonacci Finale",fn:"fibonacci",code:"def fibonacci(position):\n    if position <= 0:\n        return 0\n    first, second = 0, 1\n    for step in range(position - 1):\n        first, second = second, first + second\n    return second\n\n# Return the value at the requested index\n# The sequence begins with index zero\n",tests:[[[0],0],[[1],1],[[7],13],[[10],55]],hint:"After the loop, second holds the Fibonacci value at the requested zero-based position.",tips:"Track two consecutive Fibonacci values. Each loop moves the pair forward. Check what first and second contain after exactly position - 1 iterations; test positions 0, 1 and 7.",d:{e:["☕","💣"],b:"flee",q:"Last one! Don't blow it up."}}
+];
+const $=s=>document.querySelector(s),app=$("#app");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const API="/api";
+let uid=localStorage.getItem("debugger_uid")||("p"+Math.random().toString(36).slice(2,9));
+localStorage.setItem("debugger_uid",uid);
+let players=[],poller=null;
+let P={name:"",type:"solo",members:"",solved:0,pts:0,time:0,violations:0,help:0,log:[],qi:0,status:"lobby"};
+let qStart=0,pen=0,tick=null,started=false,locked=false,lastV=0,fsOK=false,adminView=false,pyodide=null,control={question_index:0,phase:"lobby",revision:0};
+
+route();
+addEventListener("hashchange",route);
+function route(){if(location.hash==="#organizer"){organizer()}else if(!started){lobby()}}
+
+/* ---------- BACKEND API ---------- */
+async function api(path, options={}){
+  const {headers:extraHeaders={},...rest}=options;
+  const res=await fetch(API+path,{...rest,headers:{"Content-Type":"application/json",...extraHeaders}});
+  if(!res.ok) throw new Error(await res.text()||("HTTP "+res.status));
+  return res.json();
+}
+async function save(eventType="state", details={}){
+  try{
+    const payload={...P,id:uid,ts:Date.now(),eventType,details};
+    const token=localStorage.getItem("debugger_participant_token")||"";
+    const r=await api("/players",{method:"POST",headers:token?{"x-participant-token":token}:{},body:JSON.stringify(payload)});
+    if(r.participantToken)localStorage.setItem("debugger_participant_token",r.participantToken);
+    if(r.player) P={...P,...r.player};
+    return true;
+  }catch(e){
+    // Existing pre-security participants have no issued token. Give them a fresh
+    // participant id on their next lobby entry while retaining the old record.
+    if(eventType==="participant_started" && /Participant session token is missing or invalid/i.test(e.message)){
+      uid="p"+Math.random().toString(36).slice(2,12);
+      localStorage.setItem("debugger_uid",uid);
+      localStorage.removeItem("debugger_participant_token");
+      return save(eventType,details);
+    }
+    console.warn("Backend unavailable:",e);return false
+  }
+}
+async function listen(cb){
+  if(poller) clearInterval(poller);
+  const load=async()=>{try{players=await api("/players");cb(players)}catch(e){cb(players)}};
+  await load();
+  poller=setInterval(load,2000);
+}
+function stopListen(){if(poller){clearInterval(poller);poller=null}}
+const rank=a=>[...a].sort((x,y)=>y.solved-x.solved||x.time-y.time);
+const fmt=ms=>{const s=Math.round(ms/1000);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
+async function getControl(){try{control=await api("/control");return control}catch(e){return control}}
+async function setControl(patch){control={...control,...patch,revision:(control.revision||0)+1};try{control=await api("/control",{method:"POST",body:JSON.stringify(control)})}catch(e){alert("Could not update the live game controls: "+e.message)}return control}
+async function ensurePython(){if(pyodide)return pyodide; if(!window.loadPyodide) await new Promise((resolve,reject)=>{const x=document.createElement("script");x.src="https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js";x.onload=resolve;x.onerror=()=>reject(new Error("Could not load Python runtime. Check your internet connection."));document.head.appendChild(x)});pyodide=await loadPyodide();return pyodide}
+
+
+/* ---------- LOBBY ---------- */
+function lobby(){
+ app.innerHTML=`<div style="text-align:center;margin:20px 0"><div class="glitch">ERROR 404</div><h2 style="color:var(--m)">// DEBUGGER //</h2>
+ <p style="color:var(--dim)">Python bugs are loose. The clock is ticking. Only the fastest bug-squashers survive.</p><button class="alt" id="openOrganizer" style="margin-top:8px">🛠 Organizer dashboard</button></div>
+ <div class="card"><label>Play as</label><div class="seg"><button class="on" id="m1">🧑 Individual</button><button id="m2">👥 Team</button></div>
+ <label id="nl">Your name</label><input id="nm" maxlength="24" placeholder="e.g. NullPointer Ninja">
+ <div id="tm" class="hidden"><label>Team members (comma separated)</label><input id="mb" maxlength="80" placeholder="Ada, Linus, Grace"></div>
+ <div class="hint">📜 <b>Rules:</b> 1 trial + 7 real Python questions · fix the code and hit Submit · wrong submits are free · skipping +5min · <b>leaving the tab/fullscreen triggers a warning, +15s and is reported live to organizers</b>. Ranking = most solved, then least total time.</div>
+ <button id="go" style="width:100%;font-size:18px">▶ ENTER THE ARENA</button></div>`;
+ $("#openOrganizer").onclick=()=>{location.hash="organizer"};
+ const setM=t=>{P.type=t;$("#m1").classList.toggle("on",t=="solo");$("#m2").classList.toggle("on",t=="team");$("#tm").classList.toggle("hidden",t=="solo");$("#nl").textContent=t=="solo"?"Your name":"Team name"};
+ $("#m1").onclick=()=>setM("solo");$("#m2").onclick=()=>setM("team");
+ $("#go").onclick=async()=>{const n=$("#nm").value.trim();if(!n)return $("#nm").focus();
+  P.name=n;P.members=$("#mb").value.trim();P.status="playing";started=true;
+  try{await document.documentElement.requestFullscreen();fsOK=true}catch(e){}
+  await save("participant_started",{name:P.name,type:P.type,members:P.members});listen(()=>{});await getControl();startQ(control.phase==="question"?(control.question_index||0):0);startParticipantControlSync()}}
+
+let participantControlTimer=null,lastControlActionAt=0;
+async function participantControlSync(){if(!started||location.hash==="#organizer")return;const c=await getControl();if(c.phase==="paused"){locked=true;const out=$("#out");if(out)out.textContent="⏸ The organizer has paused the event. Please wait.";return}if(locked&&c.phase!=="paused"&&!( $("#warn")?.classList.contains("show")))locked=false;if(c.action_at&&c.action_at!==lastControlActionAt){lastControlActionAt=c.action_at;if(c.action==="next"&&Number.isInteger(c.question_index)&&c.question_index!==P.qi)startQ(c.question_index);else if(c.action==="leaderboard"){players=await api("/players").catch(()=>players);showLB(P.qi)}else if(c.action==="finish")end()}}
+function startParticipantControlSync(){if(participantControlTimer)clearInterval(participantControlTimer);participantControlTimer=setInterval(participantControlSync,1800)}
+/* ---------- QUESTIONS ---------- */
+function startQ(i){
+ $("#lb").classList.remove("show");P.qi=i;const q=Q[i];qStart=Date.now();pen=0;clearInterval(tick);save("question_started",{question:i,title:q.t,fn:q.fn});
+ const prog=Q.map((_,k)=>`<i class="${k<i?"done":k==i?"cur":""}"></i>`).join("");
+ app.innerHTML=`<div class="bar"><div><span class="pill">${i==0?"TRIAL (not scored)":"Q"+i+" / "+(Q.length-1)}</span> <span class="pill">${esc(P.name)}</span></div><div class="timer" id="tm">0:00</div></div>
+ <div class="prog">${prog}</div><div class="card"><h2 style="color:var(--y)">🐞 ${q.t}</h2>
+ <p class="hint">Python function <b>${q.fn}()</b> is broken. Fix the 10–20 line code and submit it.</p>
+ <div class="code-note">LANGUAGE: PYTHON 3 · Use indentation (4 spaces). Tests run in the browser with Pyodide.</div><textarea id="code" spellcheck="false">${esc(q.code)}</textarea>
+ <div class="row" style="margin-top:12px"><button id="sub">⚡ Submit fix</button><button class="alt" id="hint">💡 Hint</button><button class="alt" id="help">📚 Library (+10s)</button><button class="alt" id="skip">⏭ Skip (+5min)</button></div>
+ <div id="out"></div></div>`;
+ const ta=$("#code");ta.addEventListener("keydown",e=>{if(e.key=="Tab"){e.preventDefault();const s=ta.selectionStart;ta.setRangeText("  ",s,ta.selectionEnd,"end")}});
+ ["paste","copy","cut","contextmenu"].forEach(ev=>ta.addEventListener(ev,e=>{if(ev!="copy"&&ev!="cut"&&ev!="paste")e.preventDefault()}));
+ $("#sub").onclick=submit;$("#help").onclick=openHelp;$("#hint").onclick=()=>{$("#out").innerHTML=`<span style="color:var(--y)">💡 ${q.hint}</span>`};
+ $("#skip").onclick=()=>{if(confirm("Skip this question? +5 min penalty.")){save("skip",{question:P.qi,title:q.t});finish(false)}};
+ tick=setInterval(()=>{if(!locked)$("#tm").textContent=fmt(Date.now()-qStart+pen)},500);
+ doodle(q.d);save();
+}
+async function runTests(code,q){
+ try{const py=await ensurePython();py.globals.set("_user_code",code);py.globals.set("_fn_name",q.fn);py.globals.set("_tests_json",JSON.stringify(q.tests));
+ const result=await py.runPythonAsync(`import json, contextlib, io\n_namespace = {}\nwith contextlib.redirect_stdout(io.StringIO()):\n    exec(_user_code, _namespace)\n_fn = _namespace.get(_fn_name)\nif not callable(_fn):\n    raise NameError("Function " + _fn_name + " not found")\n_results=[]\nfor _args, _expected in json.loads(_tests_json):\n    _actual=_fn(*_args)\n    _passed=(_actual == _expected)\n    _results.append({"passed":_passed,"args":_args,"actual":_actual,"expected":_expected})\njson.dumps(_results)`);
+ const rows=JSON.parse(result);const ok=rows.every(x=>x.passed);return{ok,msg:rows.map(x=>(x.passed?"✅ ":"❌ ")+q.fn+"("+x.args.map(v=>JSON.stringify(v)).join(", ")+") → "+(x.passed?JSON.stringify(x.actual):"got "+JSON.stringify(x.actual)+", expected "+JSON.stringify(x.expected))).join("\n")};
+ }catch(e){return{ok:false,msg:"💥 Python error: "+(e.message||String(e))}}
+}
+async function submit(){
+ if(locked)return;const q=Q[P.qi],btn=$("#sub");btn.disabled=true;btn.textContent="Running Python tests…";const r=await runTests($("#code").value,q);btn.disabled=false;btn.textContent="⚡ Submit fix";
+ save(r.ok?"submit_correct":"submit_wrong",{question:P.qi,code:$("#code").value.slice(0,1200),result:r.msg}); if(r.ok){$("#out").innerHTML=`<span class="ok">${esc(r.msg)}\n\n🎉 BUG SQUASHED!</span>`;confetti();setTimeout(()=>finish(true),900)}
+ else{$("#out").innerHTML=`<span class="bad">${esc(r.msg)}\n\nNo penalty. Fix it and try again!</span>`}}
+function finish(solved){
+ clearInterval(tick);const t=Date.now()-qStart+pen+(solved?0:PEN_SKIP-pen*0);
+ const dt=solved?Date.now()-qStart+pen:Date.now()-qStart+PEN_SKIP;
+ if(P.qi>0){P.time+=dt;if(solved){P.solved++;P.pts+=100+Math.max(0,60-Math.round(dt/1000))}}
+ if(P.qi==Q.length-1)P.status="finished";save(solved?"question_finished":"question_skipped",{question:P.qi,solved,timeMs:dt});showLB(P.qi)}
+function showLB(i){
+ $("#lbt").textContent=i==0?"🏁 Trial done! Warm-up leaderboard unlocks next":i==Q.length-1?"🏆 FINAL LEADERBOARD":"📊 Leaderboard after Q"+i;
+ const draw=()=>{const list=rank(players.length?players:[{...P,id:uid}]);
+  $("#lbbody").innerHTML=i==0?`<p>Trial complete. Real scoring starts now — time is counted from the next question.</p>`:board(list)};
+ draw();listen(l=>{players=l;if($("#lb").classList.contains("show"))draw()});
+ const nx=$("#lbnext"),last=i==Q.length-1;nx.textContent=last?"Finish":"Next question ▶";
+ if(adminView){nx.onclick=()=>{$("#lb").classList.remove("show");if(last){end()}else startQ(i+1)}}else{nx.disabled=true;nx.textContent="Waiting for organizer…";}
+ $("#lb").classList.add("show")}
+function board(list){const sorted=rank(list),top=sorted[0];return `${top?`<div class="podium"><div><div style="font-size:28px">🥈</div><b>${esc(sorted[1]?.name||"—")}</b><div>2nd place</div></div><div class="first"><div style="font-size:34px">🏆</div><b>🚩 ${esc(top.name)}</b><div>1st place · ${top.pts||0} pts</div></div><div><div style="font-size:28px">🥉</div><b>${esc(sorted[2]?.name||"—")}</b><div>3rd place</div></div></div>`:""}<table><tr><th>Rank</th><th>Participant</th><th>Solved</th><th>Points</th><th>Time</th></tr>`+sorted.slice(0,30).map((p,k)=>`<tr class="${p.id==uid?"me":""} ${k===0?"winner-row":""}"><td>${["🥇","🥈","🥉"][k]||k+1}</td><td>${k===0?"🚩 ":""}${esc(p.name)}${k===0?'<span class="winner-flag">1ST PLACE</span>':""}${p.type=="team"?" 👥":""}</td><td>${p.solved}</td><td>${p.pts||0}</td><td>${fmt(p.time)}</td></tr>`).join("")+`</table>`}
+function end(){started=false;clearDoodles();try{document.exitFullscreen()}catch(e){}
+ app.innerHTML=`<div style="text-align:center"><div class="glitch">404 → 200 OK</div><h2>All bugs fought, ${esc(P.name)}!</h2><p>Solved <b>${P.solved}/${Q.length-1}</b> · ${P.pts} pts · ${fmt(P.time)} total</p><div class="card" style="text-align:left">${board(rank(players))}</div></div>`;confetti()}
+
+/* ---------- ANTI-CHEAT ---------- */
+function violate(why){if(!started||locked||Date.now()-lastV<1500)return;lastV=Date.now();locked=true;
+ P.violations++;pen+=PEN_WARN;P.log=[...(P.log||[]).slice(-9),{t:Date.now(),w:why,q:P.qi}];P.lastWarn=Date.now();save("anti_cheat_warning",{question:P.qi,reason:why,penalty:PEN_WARN});
+ $("#vc").textContent=P.violations;$("#warn").classList.add("show");try{navigator.vibrate&&navigator.vibrate(300)}catch(e){}}
+function backIn(){$("#warn").classList.remove("show");locked=false;if(fsOK&&!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{})}
+document.addEventListener("visibilitychange",()=>{if(document.hidden)violate("Switched tab / minimized")});
+addEventListener("blur",()=>setTimeout(()=>{if(!document.hasFocus())violate("Window lost focus")},200));
+document.addEventListener("fullscreenchange",()=>{if(fsOK&&!document.fullscreenElement)violate("Exited fullscreen")});
+addEventListener("beforeunload",e=>{if(started){e.preventDefault();e.returnValue=""}});
+document.addEventListener("keydown",e=>{if(started&&(e.key=="F12"||(e.ctrlKey&&["t","n","w","u","s"].includes(e.key.toLowerCase()))||(e.ctrlKey&&e.shiftKey&&"ijc".includes(e.key.toLowerCase()))))e.preventDefault()});
+document.addEventListener("contextmenu",e=>{if(started)e.preventDefault()});
+
+/* ---------- ORGANIZER ---------- */
+async function organizer(){started=false;clearDoodles();stopListen();
+ if(!adminView){const pass=prompt("Organizer password");if(!pass){location.hash="";return lobby()}try{await api("/auth",{method:"POST",body:JSON.stringify({action:"login",password:pass})});adminView=true}catch(e){alert("Organizer login failed: "+e.message);location.hash="";return lobby()}}
+ await getControl();
+ app.innerHTML=`<div class="bar"><h2>🛰 Organizer Control Room</h2><div class="row" style="align-items:center;justify-content:flex-end"><button class="alt" id="participantView">👥 Participant view</button><span class="pill" id="cnt">connecting…</span></div></div>
+ <div class="card"><h3>🎛 Live event controls</h3><div class="statusbar" id="gameStatus">Loading event status…</div><div class="admin-actions"><button id="nextQ">▶ Move to next question</button><button class="alt" id="showBoard">🏆 Show leaderboard</button><button class="alt" id="pauseGame">⏸ Pause / Resume</button><button class="alt" id="finishGame">🏁 End event</button></div><p class="hint">Controls are synchronized with participant screens. Moving to the next question opens that question for active participants.</p></div><br>
+ <div class="card"><h3>➕ Add participant</h3><div class="row"><div><label>Participant / team name</label><input id="newName" placeholder="Name or team name"></div><div><label>Entry type</label><select id="newType"><option value="solo">Individual</option><option value="team">Team</option></select></div></div><label>Team members (optional)</label><input id="newMembers" placeholder="Comma-separated names"><button id="addPlayer">Add participant</button><span id="addMsg" class="hint"></span></div><br>
+ <div class="card"><h3>🚨 Live warnings</h3><div id="wl" style="max-height:230px;overflow:auto"></div></div><br>
+ <div class="card"><h3>🏆 Participants & leaderboard</h3><p><button id="csv">⬇ Export all activities (CSV)</button> <button class="alt" id="summaryCsv">⬇ Export participant summary</button></p><div id="pl"></div></div>`;
+ $("#participantView").onclick=async()=>{await api("/auth",{method:"POST",body:JSON.stringify({action:"logout"})}).catch(()=>{});adminView=false;location.hash=""};
+ const status=()=>{$("#gameStatus").textContent=`Event: ${control.phase||"lobby"} · Current question: ${Math.min((control.question_index||0)+1,Q.length)} of ${Q.length} · Revision ${control.revision||0}`};status();
+ $("#nextQ").onclick=async()=>{const next=Math.min(Q.length-1,(control.question_index||0)+1);await setControl({question_index:next,phase:"question",action:"next",action_at:Date.now()});status()};
+ $("#showBoard").onclick=async()=>{await setControl({phase:"leaderboard",action:"leaderboard",action_at:Date.now()});status()};
+ $("#pauseGame").onclick=async()=>{await setControl({phase:control.phase==="paused"?"question":"paused",action:"pause_toggle",action_at:Date.now()});status()};
+ $("#finishGame").onclick=async()=>{if(confirm("End the event for all participants?")){await setControl({phase:"finished",action:"finish",action_at:Date.now()});status()}};
+ $("#addPlayer").onclick=async()=>{const name=$("#newName").value.trim();if(!name)return $("#newName").focus();const id="manual_"+Math.random().toString(36).slice(2,10);try{await api("/players",{method:"POST",body:JSON.stringify({id,name,type:$("#newType").value,members:$("#newMembers").value.trim(),solved:0,pts:0,time:0,violations:0,help:0,qi:0,status:"added_by_organizer",eventType:"organizer_added",details:{source:"organizer"}})});$("#newName").value="";$("#newMembers").value="";$("#addMsg").textContent="Participant added.";await refresh()}catch(e){$("#addMsg").textContent="Could not add: "+e.message}};
+ const draw=l=>{players=l;$("#cnt").textContent=l.length+" participants";const ev=[];l.forEach(p=>(p.log||[]).forEach(x=>ev.push({n:p.name,...x})));ev.sort((a,b)=>b.t-a.t);$("#wl").innerHTML=ev.length?`<table>`+ev.slice(0,40).map(e=>`<tr><td>${new Date(e.t).toLocaleTimeString()}</td><td><b>${esc(e.n)}</b></td><td class="warnc">${esc(e.w)}</td><td>Q${e.q}</td></tr>`).join("")+`</table>`:"<p class='hint'>No warnings yet.</p>";$("#pl").innerHTML=board(rank(l))+`<h3 style="margin-top:20px">Participant management</h3><table><tr><th>Name</th><th>Status</th><th>Question</th><th>Help</th><th>Warnings</th></tr>`+rank(l).map(p=>`<tr><td>${esc(p.name)}</td><td>${esc(p.status)}</td><td>${(p.qi||0)+1}</td><td>${p.help||0}</td><td>${p.violations||0}</td></tr>`).join("")+`</table>`};
+ async function refresh(){try{const l=await api("/players");draw(l)}catch(e){}}refresh();listen(draw);setInterval(async()=>{if(location.hash==="#organizer"){await getControl();status()}},1800);$("#csv").onclick=()=>window.location="/api/export-activities";$("#summaryCsv").onclick=()=>window.location="/api/export-participants";
+}
+
+/* ---------- HELP BROWSER ---------- */
+const HELP_PEN=10000;
+const L=(p,t)=>`<a data-p="${p}">${t}</a>`;
+const H={
+home:{t:"Home",k:"python library debugging hints",h:()=>`<h2>📚 Python Debugging Library</h2><p>Quick references and focused tips for the current challenge. Open <b>Current question hints</b> for a hint and approach without revealing a full solution.</p><ul><li>${L('lists','Lists & indexing')}</li><li>${L('strings','Strings')}</li><li>${L('loops','Loops & range')}</li><li>${L('conditions','Conditions & operators')}</li><li>${L('functions','Functions & return')}</li><li>${L('tips','Debugging checklist')}</li><li>${L('current','Current question hints & tips')}</li></ul>`},
+lists:{t:"Lists",k:"list array index length append reverse",h:()=>`<h2>Lists</h2><pre>items = [3, 5, 8]
+len(items)       # number of items
+items[0]         # first item
+items[-1]        # last item
+items.reverse()  # reverse in place</pre><p>List indexes start at zero. The final valid index is <code>len(items) - 1</code>.</p>`},
+strings:{t:"Strings",k:"string slice lower join count reverse",h:()=>`<h2>Strings</h2><pre>text.lower()       # lowercase
+text.upper()       # uppercase
+text[::-1]         # reversed copy
+"-".join(words)    # join strings
+text.count("a")    # count a character</pre><p>Strings are immutable. Methods and slices return a new string.</p>`},
+loops:{t:"Loops & range",k:"for while range iteration loop",h:()=>`<h2>Loops & range</h2><pre>for index in range(5):
+    print(index)
+
+for item in items:
+    print(item)</pre><p><code>range(5)</code> produces 0 through 4. The stop value is not included.</p>`},
+conditions:{t:"Conditions",k:"if elif else comparison modulo",h:()=>`<h2>Conditions & operators</h2><pre>if score >= 50:
+    passed = True
+else:
+    passed = False
+
+number % 2 == 0  # even number</pre><p>Use <code>==</code> to compare and <code>=</code> to assign. The modulo operator returns a remainder.</p>`},
+functions:{t:"Functions",k:"def return print parameters",h:()=>`<h2>Functions & return</h2><pre>def add(a, b):
+    result = a + b
+    return result</pre><p><code>return</code> sends a value back to the caller. <code>print()</code> only displays text and returns <code>None</code>.</p>`},
+tips:{t:"Debug checklist",k:"debugging errors indentation tests",h:()=>`<h2>🐞 Debugging checklist</h2><ol><li>Read the error message carefully.</li><li>Check indentation: Python uses indentation to define blocks.</li><li>Trace the function with a tiny input.</li><li>Check return values, not only printed output.</li><li>Test edge cases: zero, empty input, negatives and uppercase text.</li><li>Change one thing at a time.</li></ol>`}
+};
+let hh=[],hi=-1;
+function hshow(p,push=true){if(p==="current"&&H.current){}else if(!H[p])p="home";if(push){hh=hh.slice(0,hi+1);hh.push(p);hi=hh.length-1}
+ $("#hurl").textContent="404://help/"+p;$("#hsearch").value="";$("#hpage").innerHTML=H[p].h();
+ $("#hpage").querySelectorAll("a[data-p]").forEach(a=>a.onclick=()=>hshow(a.dataset.p))}
+function openHelp(){const q=Q[P.qi];H.current={t:"Question hints",k:"question hint answer tips",h:()=>`<h2>📌 ${q.t} · Hints & tips</h2><h3>Hint</h3><p>${q.hint}</p><h3>How to approach it</h3><p>${q.tips}</p><p>Test the smallest input first, then a normal case and an edge case. The library explains the idea without showing the full answer.</p>`};pen+=HELP_PEN;P.help=(P.help||0)+1;save("help_opened",{question:P.qi,penalty:HELP_PEN});hh=[];hi=-1;hshow("current");$("#hb").classList.add("show")}
+function closeHelp(){$("#hb").classList.remove("show")}
+$("#hback").onclick=()=>{if(hi>0){hi--;hshow(hh[hi],false)}};
+$("#hfwd").onclick=()=>{if(hi<hh.length-1){hi++;hshow(hh[hi],false)}};
+$("#hhome").onclick=()=>hshow("home");
+$("#hsearch").oninput=e=>{const v=e.target.value.toLowerCase().trim();if(!v)return hshow(hh[hi]||"home",false);
+ const r=Object.entries(H).filter(([k,x])=>(x.t+" "+x.k).toLowerCase().includes(v));
+ $("#hurl").textContent="404://search?q="+v;
+ $("#hpage").innerHTML=r.length?"<h2>Results</h2><ul>"+r.map(([k,x])=>`<li>${L(k,x.t)}</li>`).join("")+"</ul>":"<p>No pages found. Try another keyword.</p>";
+ $("#hpage").querySelectorAll("a[data-p]").forEach(a=>a.onclick=()=>hshow(a.dataset.p))};
+
+/* ---------- DOODLES ---------- */
+let doodles=[],raf=0,mx=innerWidth/2,my=innerHeight/2;
+addEventListener("pointermove",e=>{mx=e.clientX;my=e.clientY});
+function clearDoodles(){cancelAnimationFrame(raf);$("#doodles").innerHTML="";doodles=[]}
+function doodle(d){clearDoodles();
+ d.e.forEach((em,i)=>{const el=document.createElement("div");el.className="doodle";el.textContent=em;$("#doodles").appendChild(el);
+  const o={el,x:Math.random()*(innerWidth-80),y:Math.random()*(innerHeight-80),vx:(Math.random()-.5)*3,vy:(Math.random()-.5)*3,a:i*3,b:d.b};
+  el.onclick=()=>say(d.q,o);doodles.push(o)});say(d.q,doodles[0]);
+ const loop=()=>{doodles.forEach(o=>{const dx=mx-o.x,dy=my-o.y,dist=Math.hypot(dx,dy)||1;o.a+=.02;
+  if(o.b=="flee"){if(dist<220){o.vx-=dx/dist*.5;o.vy-=dy/dist*.5}else{o.vx+=(Math.random()-.5)*.4;o.vy+=(Math.random()-.5)*.4}}
+  else if(o.b=="follow"){o.vx+=dx/dist*.12;o.vy+=dy/dist*.12;if(dist<70){o.vx*=.8;o.vy*=.8}}
+  else if(o.b=="wander"){o.vx+=(Math.random()-.5)*.5;o.vy+=(Math.random()-.5)*.5}
+  else if(o.b=="orbit"){o.x=mx+Math.cos(o.a*2)*140-20;o.y=my+Math.sin(o.a*2)*140-20;o.vx=o.vy=0}
+  else if(o.b=="bounce"){o.vy+=.25}
+  const sp=Math.hypot(o.vx,o.vy);if(sp>5){o.vx*=5/sp;o.vy*=5/sp}
+  o.x+=o.vx;o.y+=o.vy;
+  if(o.x<0||o.x>innerWidth-50){o.vx*=-.9;o.x=Math.max(0,Math.min(innerWidth-50,o.x))}
+  if(o.y<0||o.y>innerHeight-50){o.vy=o.b=="bounce"?-12:o.vy*-.9;o.y=Math.max(0,Math.min(innerHeight-50,o.y))}
+  o.el.style.left=o.x+"px";o.el.style.top=o.y+"px";o.el.style.transform=`rotate(${Math.sin(o.a*3)*15+(o.vx>0?8:-8)}deg) scaleX(${o.vx<0?-1:1})`});
+  raf=requestAnimationFrame(loop)};loop()}
+function say(t,o){const b=$("#bub");b.textContent=t;b.style.left=Math.min(innerWidth-190,Math.max(4,o.x))+"px";b.style.top=Math.max(4,o.y-34)+"px";b.style.opacity=1;clearTimeout(say.t);say.t=setTimeout(()=>b.style.opacity=0,2200)}
+function confetti(){for(let i=0;i<40;i++){const c=document.createElement("div");c.textContent=["✨","🎉","💚","🟩"][i%4];
+ Object.assign(c.style,{position:"fixed",left:Math.random()*100+"vw",top:"-30px",fontSize:"22px",zIndex:200,transition:"transform 1.6s ease-in,opacity 1.6s",pointerEvents:"none"});
+ document.body.appendChild(c);requestAnimationFrame(()=>{c.style.transform=`translateY(${innerHeight+60}px) rotate(${Math.random()*720}deg)`;c.style.opacity=0});setTimeout(()=>c.remove(),1800)}}
+</script></body></html>
